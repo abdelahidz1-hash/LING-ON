@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل...</title>
+    <style>
+        /* إعدادات الصفحة الأساسية */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* تنسيق الحاوية */
+        #content {
+            display: none; 
+            text-align: center;
+        }
+
+        /* تنسيق الصورة */
+        img {
+            max-width: 70%;    
+            max-height: 70vh;   
+            display: block;
+            border: none;      
+            border-radius: 0;  
+            box-shadow: none;  
+            margin: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="content">
+        <img src="https://i1-e.pinimg.com/474x/f9/eb/eb/f9ebebce77a2b7f62a9efc9257744ec2.jpg" alt="Logo">
+    </div>
+
+    <script>
+        // الانتظار لمدة 3 ثواني لإظهار الصورة
+        setTimeout(function() {
+            document.getElementById('content').style.display = 'block';
+            document.body.style.backgroundColor = '#000'; 
+
+            // الانتظار لمدة ثانيتين إضافيتين بعد ظهور الصورة ثم التوجيه للموقع
+            setTimeout(function() {
+                window.location.href = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-2/?launchedfrom=homescreen";
+            }, 2000); 
+
+        }, 3000);
+    </script>
+
+</body>
+</html>
