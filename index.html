@@ -3,59 +3,799 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحميل...</title>
+    <title> DOWNLOAD FF 2022 </title>
+    <!-- استدعاء خط Cairo بوزن 300 من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300&display=swap" rel="stylesheet">
+    <!-- استدعاء FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- استدعاء مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* إعدادات الصفحة الأساسية */
-        body, html {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000; 
+            font-family: 'Cairo', sans-serif;
+            font-weight: 300;
+        }
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* تنسيق الحاوية */
-        #content {
-            display: none; 
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #0d0d0d;
+            border: 1px solid #1f1f1f;
+            border-radius: 24px;
+            padding: 25px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            position: relative; /* لجعل الزر يتمركز بالنسبة للحاوية */
+        }
+
+        /* حاوية تضم عداد النقاط وزر الاستفهام في أعلى اليسار */
+        .top-left-group {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        /* تنسيق عنصر عداد النقاط بجانب زر الاستفهام */
+        .points-badge {
+            background-color: #141414;
+            border: 1px solid #262626;
+            border-radius: 14px;
+            padding: 4px 10px;
+            color: #ffcc00;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            cursor: pointer; /* جعل المؤشر يشير إلى أنه قابل للضغط */
+            transition: all 0.3s ease;
+        }
+
+        .points-badge:hover {
+            border-color: #737373;
+            background-color: #1c1c1c;
+        }
+
+        /* تنسيق زر الاستفهام الجديد في أعلى اليسار */
+        .help-btn {
+            width: 28px;
+            height: 28px;
+            background-color: #141414;
+            border: 1px solid #262626;
+            border-radius: 50%;
+            color: #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            border-color: #737373;
+            background-color: #1c1c1c;
+        }
+
+        /* تنسيق نافذة اللافته المنبثقة (Modal) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            color: #9ca3af;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            z-index: 5;
+        }
+
+        .close-modal:hover {
+            color: #ffffff;
+        }
+
+        /* قسم الصورة الدائرية */
+        .profile-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            object-fit: cover;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* أزرار الروابط (تم تصغير الحجم قليلاً هنا) */
+        .link-card {
+            background-color: #141414;
+            border: 1px solid #262626;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .link-card:hover {
+            border-color: #737373;
+            background-color: #1c1c1c;
+        }
+
+        .link-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: right;
+        }
+
+        .link-content img.custom-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            filter: invert(1); /* لجعل الأيقونة تظهر بشكل واضح مع الخلفية الداكنة إذا كانت سوداء الأصل */
+        }
+
+        /* تخصيص أيقونة SCRIPT HEADSHOT لإزالة الفلتر */
+        .link-content img.venom-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            filter: none;
+        }
+
+        .link-content i {
+            color: #ff0000;
+            font-size: 18px;
+        }
+
+        .link-text h3 {
+            font-size: 13px;
+            font-weight: 300;
+            color: #00ff66;
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+            margin-bottom: 1px;
+        }
+
+        .link-text p {
+            font-size: 10px;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .link-text p img.inline-point-icon {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+        }
+
+        .arrow-icon {
+            color: #a3a3a3;
+            font-size: 12px;
+        }
+
+        /* صندوق الإعلان */
+        .ad-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        /* صندوق كيفية الاستخدام وصندوق إدخال الكود */
+        .instructions-box {
+            background-color: #111111;
+            border: 1px solid #1f1f1f;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .instructions-title {
+            font-size: 14px;
+            color: #ffcc00; /* تم تغيير اللون إلى الأصفر */
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions-title i {
+            color: #ffcc00; /* تغيير أيقونة العنوان لتكون صفراء أيضاً متناسقة */
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .step-num {
+            background-color: #262626;
+            color: #ff0000; /* تم تغيير لون الرقم إلى الأحمر */
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* تنسيق شريط التحميل */
+        #venom-progress-container {
+            display: none;
+            margin-bottom: 15px;
+            background-color: #141414;
+            border: 1px solid #262626;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: right;
+        }
+        #venom-progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: #262626;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        #venom-progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #ff0000;
+            transition: width 0.1s linear;
+        }
+        #venom-progress-text {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* تصميم حقل ادخال الكود وزر الإرسال داخل النافذة */
+        .promo-input {
+            width: 100%;
+            background-color: #181818;
+            border: 1px solid #262626;
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: #ffffff;
+            font-size: 12px;
+            margin-bottom: 10px;
+            outline: none;
+            text-align: right;
+        }
+        .promo-input:focus {
+            border-color: #ffcc00;
+        }
+        .promo-submit-btn {
+            width: 100%;
+            background-color: #ffcc00;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .promo-submit-btn:hover {
+            background-color: #e6b800;
+        }
+        #promo-msg {
+            font-size: 11px;
+            margin-top: 8px;
             text-align: center;
         }
 
-        /* تنسيق الصورة */
-        img {
-            max-width: 70%;    
-            max-height: 70vh;   
-            display: block;
-            border: none;      
-            border-radius: 0;  
-            box-shadow: none;  
-            margin: auto;
+        /* تنسيق الإشعار المؤقت (Toast) */
+        #custom-toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #141414;
+            color: #00ff66;
+            text-align: center;
+            border: 1px solid #262626;
+            border-radius: 12px;
+            padding: 12px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+            transition: visibility 0.3s, opacity 0.3s ease;
+            opacity: 0;
         }
-
+        #custom-toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
-    <div id="content">
-        <img src="https://i1-e.pinimg.com/474x/f9/eb/eb/f9ebebce77a2b7f62a9efc9257744ec2.jpg" alt="Logo">
+    <!-- عنصر الإشعار المؤقت -->
+    <div id="custom-toast">تم فتح قفل زر صالح لمدة يوم</div>
+
+    <div class="container">
+        <!-- مجموعة أعلى اليسار: عداد النقاط بجانب زر الاستفهام -->
+        <div class="top-left-group">
+            <div class="points-badge" id="user-points" title="نقاطك الحالية" onclick="togglePointsModal(true)">
+                <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/Icon_exchange_SOT_br_48.png" alt="Points Icon" style="width: 14px; height: 14px; object-fit: contain;">
+                <span id="points-num" style="font-weight: bold;">0</span>
+            </div>
+            <div class="help-btn" onclick="toggleModal(true)" title="كيفية الاستخدام">
+                <i class="fas fa-question"></i>
+            </div>
+        </div>
+
+        <!-- الصورة الشخصية -->
+        <div class="profile-container">
+            <img src="https://i.ibb.co/6R2C1JTt/Picsart-26-11-11-08-32-29-608.png" alt="Profile Picture" class="profile-pic">
+        </div>
+
+        <!-- الزر الأول (رابط تحميل فري فاير - مقفل مقابل 3 نقاط) -->
+        <div onclick="handleDownloadClick(event)" class="link-card" id="download-ff-btn">
+            <div class="link-content">
+                <img src="https://images.icon-icons.com/1946/PNG/96/1904659-arrow-backup-down-download-save-storage-transfer_122509.png" alt="Icon" class="custom-icon">
+                <div class="link-text">
+                    <h3 id="download-title">DOWNLOAD FF 2022</h3>
+                    <p id="download-sub">
+                        <span>3</span>
+                        <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/Icon_exchange_SOT_br_48.png" alt="Point" class="inline-point-icon">
+                    </p>
+                </div>
+            </div>
+            <i class="fas fa-lock arrow-icon" id="download-icon-status" style="color: #ff4444;"></i>
+        </div>
+
+        <!-- الزر الثاني (رابط ربط الحساب) -->
+        <a href="https://register.samosasmobiles.dpdns.org/" target="_blank" class="link-card">
+            <div class="link-content">
+                <img src="https://images.icon-icons.com/1769/PNG/96/4092559-magnifier-mobile-ui-search-ui-website-zoom_114034.png" alt="Icon" class="custom-icon">
+                <div class="link-text">
+                    <h3>OPEN AN ACCOUNT</h3>
+                    <p></p>
+                </div>
+            </div>
+            <i class="fas fa-arrow-left arrow-icon"></i>
+        </a>
+
+        <!-- زر GET A FREE ACCOUNT الجديد -->
+        <div class="link-card" onclick="alert('عذراً، هذا الزر قيد التطوير حالياً!')">
+            <div class="link-content">
+                <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/FF_ui_Gift_box02.png" alt="Icon" class="venom-icon">
+                <div class="link-text">
+                    <h3>GET A FREE ACCOUNT</h3>
+                    <p></p>
+                </div>
+            </div>
+            <i class="fas fa-arrow-left arrow-icon"></i>
+        </div>
+
+        <!-- زر SCRIPT HEADSHOT الجديد -->
+        <div id="venom-btn" class="link-card" onclick="startVenomProcess()">
+            <div class="link-content">
+                <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/icon_killed_2.png" alt="Icon" class="venom-icon">
+                <div class="link-text">
+                    <h3>SCRIPT HEADSHOT</h3>
+                    <p></p>
+                </div>
+            </div>
+            <i class="fas fa-arrow-left arrow-icon"></i>
+        </div>
+
+        <!-- شريط التحميل الخاص بـ SCRIPT HEADSHOT -->
+        <div id="venom-progress-container">
+            <!-- إضافة صورة الساعة الرملية وتأثير الدوران عليها -->
+            <div style="text-align: center; margin-bottom: 6px;">
+                <i class="fas fa-hourglass-half" style="color: #ff0000; font-size: 16px; animation: spinHourglass 2s linear infinite;"></i>
+            </div>
+            <div id="venom-progress-text">جاري تجهيز التحميل...</div>
+            <div id="venom-progress-bar-bg">
+                <div id="venom-progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- إعلان البانر -->
+        <div class="ad-container" id="ad-banner-box">
+            <script>
+              atOptions = {
+                'key' : '69ab74afae32c71dfa68f3228b696128',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script src="https://bauval.org/22/69ab74afae32c71dfa68f3228b696128"></script>
+        </div>
+        
+        <!-- النص المضاف بوزن 900 تحت إعلان البانر -->
+        <div style="font-weight: 900; font-size: 12px; color: #ffffff; margin-top: 8px; text-align: center;">
+            اضغط على اعلان لمساعدة ولن تخسر شيئا
+        </div>
     </div>
 
+    <!-- نافذة منبثقة (Modal) لافتة كيفية الاستخدام -->
+    <div id="helpModal" class="modal-overlay" onclick="handleModalClick(event, 'helpModal')">
+        <div class="modal-content">
+            <div class="instructions-box" style="margin-top: 0; position: relative;">
+                <div class="close-modal" onclick="toggleModal(false)">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="instructions-title">
+                    <i class="fas fa-book-open"></i>
+                    <span>كيفية الاستخدام</span>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div>امسح لعبة فري فاير 2026، إذا كانت لديك MAX لا تحذفها</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div>حمل ملف فري فاير النسخة القديمة من هنا</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div>قم بإنشاء حساب وربطه مع ديسكورد</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div>إذا تريد الحصول على حساب جاهز فقط شارك الموقع الرسمي هذا مع إرسال صورة لصاحب الموقع أنك طبقت الشروط المطلوبة رابط قناته <a href="https://tiktok.com/@pr_venom_dz" target="_blank" style="color: #ff0000; text-decoration: underline;">tiktok.com/@pr_venom_dz</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة لإدخال الكود والحصول على النقاط -->
+    <div id="pointsModal" class="modal-overlay" onclick="handleModalClick(event, 'pointsModal')">
+        <div class="modal-content">
+            <div class="instructions-box" style="margin-top: 0; position: relative;">
+                <div class="close-modal" onclick="togglePointsModal(false)">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="instructions-title" style="font-weight: 900;">
+                    <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/Icon_exchange_SOT_br_48.png" alt="Coin" style="width: 18px; height: 18px; object-fit: contain;">
+                    <span>شحن النقاط بالكود</span>
+                </div>
+                <div style="font-size: 12px; color: #9ca3af; margin-bottom: 12px; font-weight: 900;">
+                    أدخل كود الهدية للحصول على النقاط:
+                </div>
+                <input type="text" id="promoCodeInput" class="promo-input" placeholder="أدخل الكود هنا..." style="font-weight: 900;">
+                <button class="promo-submit-btn" onclick="submitPromoCode()" style="font-weight: 900;">إرسال</button>
+                <div id="promo-msg"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* إضافة حركة دوران للساعة الرملية */
+        @keyframes spinHourglass {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
     <script>
-        // الانتظار لمدة 3 ثواني لإظهار الصورة
-        setTimeout(function() {
-            document.getElementById('content').style.display = 'block';
-            document.body.style.backgroundColor = '#000'; 
+        // إعدادات اتصال Supabase باستخدام البيانات المعطاة
+        const SUPABASE_URL = 'https://s0nhasCNn0HyjGUMcztiTg.supabase.co';
+        const SUPABASE_ANON_KEY = 'Sb_publishable_s0nhasCNn0HyjGUMcztiTg_LqUARhSd';
+        
+        // تهيئة عميل Supabase
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // الانتظار لمدة ثانيتين إضافيتين بعد ظهور الصورة ثم التوجيه للموقع
-            setTimeout(function() {
-                window.location.href = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-2/?launchedfrom=homescreen";
-            }, 2000); 
+        let venomStarted = false;
 
-        }, 3000);
+        // دالة تحديث وعرض النقاط عند فتح الصفحة
+        window.onload = async function() {
+            await loadPointsFromDatabase();
+            checkDownloadUnlockStatus();
+        };
+
+        // جلب النقاط من التخزين المحلي
+        async function getPoints() {
+            return parseInt(localStorage.getItem('user_points')) || 0;
+        }
+
+        async function loadPointsFromDatabase() {
+            try {
+                let localPts = parseInt(localStorage.getItem('user_points')) || 0;
+                setPoints(localPts);
+            } catch (err) {
+                console.error("خطأ في الاتصال بقاعدة البيانات:", err);
+            }
+        }
+
+        function setPoints(pts) {
+            localStorage.setItem('user_points', pts);
+            updatePointsDisplay();
+            checkDownloadUnlockStatus();
+        }
+
+        function updatePointsDisplay() {
+            document.getElementById('points-num').innerText = parseInt(localStorage.getItem('user_points')) || 0;
+        }
+
+        // إظهار الإشعار المؤقت (Toast)
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            toast.innerText = message;
+            toast.className = 'show';
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000); // يختفي بعد 3 ثوانٍ
+        }
+
+        // التحقق مما إذا كان الزر مفتوحاً مسبقاً (صالح لمدة يوم واحد فقط)
+        function checkDownloadUnlockStatus() {
+            const unlockTime = parseInt(localStorage.getItem('download_ff_unlock_time')) || 0;
+            const oneDayInMillis = 24 * 60 * 60 * 1000;
+            const currentTime = Date.now();
+
+            const titleEl = document.getElementById('download-title');
+            const subEl = document.getElementById('download-sub');
+            const iconEl = document.getElementById('download-icon-status');
+
+            if (unlockTime && (currentTime - unlockTime > oneDayInMillis)) {
+                localStorage.removeItem('download_ff_unlocked');
+                localStorage.removeItem('download_ff_unlock_time');
+            }
+
+            const isUnlocked = localStorage.getItem('download_ff_unlocked') === 'true';
+
+            if (isUnlocked) {
+                titleEl.innerText = 'DOWNLOAD FF 2022';
+                titleEl.style.color = '#00ff66';
+                subEl.innerHTML = '<span>3</span> <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/Icon_exchange_SOT_br_48.png" alt="Point" class="inline-point-icon">';
+                iconEl.className = 'fas fa-arrow-left arrow-icon';
+                iconEl.style.color = '#a3a3a3';
+            } else {
+                titleEl.innerText = 'DOWNLOAD FF 2022';
+                titleEl.style.color = '#00ff66';
+                subEl.innerHTML = '<span>3</span> <img src="https://raw.githubusercontent.com/0xme/ff-resources/refs/heads/main/pngs/300x300/Icon_exchange_SOT_br_48.png" alt="Point" class="inline-point-icon">';
+                iconEl.className = 'fas fa-lock arrow-icon';
+                iconEl.style.color = '#ff4444';
+            }
+        }
+
+        // التعامل مع النقر على زر التحميل المقفل
+        async function handleDownloadClick(event) {
+            checkDownloadUnlockStatus();
+            const isUnlocked = localStorage.getItem('download_ff_unlocked') === 'true';
+            
+            if (isUnlocked) {
+                window.open('https://www.mediafire.com/file/m5kuzdjwdb8nk53/freefire2022_32bit_65bit.zip/file?dkey=7q5b31efa3g&r=772', '_blank');
+            } else {
+                let currentPts = await getPoints();
+                if (currentPts >= 3) {
+                    if (confirm('هل تريد خصم 3 نقاط لفتح رابط التحميل (صالح لمدة 24 ساعة)؟')) {
+                        setPoints(currentPts - 3);
+                        localStorage.setItem('download_ff_unlocked', 'true');
+                        localStorage.setItem('download_ff_unlock_time', Date.now());
+                        checkDownloadUnlockStatus();
+                        showToast('تم فتح قفل زر صالح لمدة يوم');
+                        window.open('https://www.mediafire.com/file/m5kuzdjwdb8nk53/freefire2022_32bit_65bit.zip/file?dkey=7q5b31efa3g&r=772', '_blank');
+                    }
+                } else {
+                    alert('رصيدك غير كافٍ! تحتاج إلى 3 نقاط على الأقل لفتح هذا الزر. يمكنك شحن النقاط عبر إدخال الكود في أعلى الصفحة.');
+                }
+            }
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('helpModal');
+            modal.style.display = show ? 'flex' : 'none';
+        }
+
+        function togglePointsModal(show) {
+            const modal = document.getElementById('pointsModal');
+            modal.style.display = show ? 'flex' : 'none';
+            document.getElementById('promoCodeInput').value = '';
+            document.getElementById('promo-msg').innerText = '';
+        }
+
+        function handleModalClick(event, modalId) {
+            if (event.target.id === modalId) {
+                if (modalId === 'helpModal') toggleModal(false);
+                if (modalId === 'pointsModal') togglePointsModal(false);
+            }
+        }
+
+        // دالة جلب الأكواد من ملف cod.gift والتحقق منها
+        async function submitPromoCode() {
+            const codeInput = document.getElementById('promoCodeInput').value.trim();
+            const msgDiv = document.getElementById('promo-msg');
+
+            if (!codeInput) {
+                msgDiv.style.color = '#ff4444';
+                msgDiv.innerText = 'الرجاء إدخال الكود أولاً.';
+                return;
+            }
+
+            msgDiv.style.color = '#ffcc00';
+            msgDiv.innerText = 'جاري التحقق من الكود...';
+
+            try {
+                // جلب محتوى ملف cod.gift من مستودع GitHub الخاص بك مباشرة
+                // ملاحظة: استبدل رابط الـ raw أدناه برابط ملف cod.gift الفعلي إذا لزم الأمر، أو استخدم مساره النسبي
+                const response = await fetch('cod.gift?' + new Date().getTime()); // منع التخزين المؤقت
+                
+                if (!response.ok) {
+                    throw new Error('فشل في جلب ملف الأكواد');
+                }
+
+                const fileText = await response.text();
+                
+                // قراءة الأكواد سطراً بسطر أو البحث داخل الملف
+                // نفترض أن كل سطر يحتوي على كود وقيمة النقاط هكذا: KOD:25 أو مجرد الأكواد يفصل بينها أسطر
+                const lines = fileText.split(/\r?\n/);
+                let foundPoints = 0;
+                let isValid = false;
+
+                for (let line of lines) {
+                    let parts = line.trim().split(':'); // الصيغة المفترضة: الكود:النقاط (مثل: 100K:25 أو VIP50:50)
+                    let fileCode = parts[0].trim();
+                    let ptsToAdd = parts[1] ? parseInt(parts[1]) : 25; // افتراض 25 نقطة إذا لم تُحدد القيمة
+
+                    if (fileCode === codeInput) {
+                        isValid = true;
+                        foundPoints = ptsToAdd;
+                        break;
+                    }
+                }
+
+                if (!isValid) {
+                    // تجربة البحث المباشر إذا كان الملف يحتوي على الأكواد فقط بدون نقاط (كل كود في سطر)
+                    const cleanCodes = lines.map(l => l.trim()).filter(l => l.length > 0);
+                    if (cleanCodes.includes(codeInput)) {
+                        isValid = true;
+                        foundPoints = 25; // القيمة الافتراضية المانحة للنقاط
+                    }
+                }
+
+                if (isValid) {
+                    // التحقق مما إذا كان هذا الكود قد استخدم مسبقاً من طرف هذا المستخدم
+                    const redeemedKey = 'redeemed_code_' + codeInput;
+                    if (localStorage.getItem(redeemedKey) === 'true') {
+                        msgDiv.style.color = '#ff4444';
+                        msgDiv.innerText = 'لقد استخدمت هذا الكود مسبقاً!';
+                        return;
+                    }
+
+                    let currentPts = await getPoints();
+                    setPoints(currentPts + foundPoints);
+                    localStorage.setItem(redeemedKey, 'true');
+                    
+                    msgDiv.style.color = '#00ff66';
+                    msgDiv.innerText = `تم إضافة ${foundPoints} نقطة بنجاح!`;
+                    setTimeout(() => {
+                        togglePointsModal(false);
+                    }, 1500);
+                } else {
+                    msgDiv.style.color = '#ff4444';
+                    msgDiv.innerText = 'الكود غير صحيح أو انتهت صلاحيته.';
+                }
+
+            } catch (err) {
+                console.error(err);
+                msgDiv.style.color = '#ff4444';
+                msgDiv.innerText = 'حدث خطأ أثناء الاتصال، تأكد من وجود ملف cod.gift.';
+            }
+        }
+
+        function startVenomProcess() {
+            if (venomStarted) return;
+            venomStarted = true;
+
+            const btn = document.getElementById('venom-btn');
+            const progressContainer = document.getElementById('venom-progress-container');
+            const progressBar = document.getElementById('venom-progress-bar');
+            const progressText = document.getElementById('venom-progress-text');
+
+            btn.style.opacity = '0.5';
+            btn.style.pointerEvents = 'none';
+            progressContainer.style.display = 'block';
+
+            let startTime = Date.now();
+            let phase1Duration = 10000; 
+            let pauseDuration = 5000;  
+            let phase2Duration = 10000; 
+            let totalActiveTime = phase1Duration + phase2Duration;
+
+            let timer = setInterval(() => {
+                let elapsed = Date.now() - startTime;
+
+                if (elapsed <= phase1Duration) {
+                    let percent = (elapsed / phase1Duration) * 50;
+                    progressBar.style.width = percent + '%';
+                    let remainingSecs = Math.ceil((phase1Duration - elapsed) / 1000);
+                    progressText.innerText = `جاري التحميل... متبقي ${remainingSecs} ثوانٍ`;
+                } 
+                else if (elapsed <= phase1Duration + pauseDuration) {
+                    progressBar.style.width = '50%';
+                    progressText.innerText = 'يرجى الضغط على الإعلان للمتابعة...';
+                } 
+                else if (elapsed <= totalActiveTime + pauseDuration) {
+                    let elapsedAfterPause = elapsed - (phase1Duration + pauseDuration);
+                    let percent = 50 + (elapsedAfterPause / phase2Duration) * 50;
+                    progressBar.style.width = percent + '%';
+                    let remainingSecs = Math.ceil((phase2Duration - elapsedAfterPause) / 1000);
+                    progressText.innerText = `جاري استكمال التحميل... متبقي ${remainingSecs} ثوانٍ`;
+                } 
+                else {
+                    progressBar.style.width = '100%';
+                    progressText.innerText = 'تم التجهيز بنجاح! يتم الآن توجيهك للرابط...';
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        window.open('https://www.mediafire.com/file/vxpqlops8epj851/PR+VENOM.zip/file', '_blank');
+                    }, 500);
+                }
+            }, 50);
+        }
     </script>
-
 </body>
 </html>
